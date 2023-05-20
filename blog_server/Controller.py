@@ -4,8 +4,8 @@ import http.cookies
 import ast
 import re
 
-
 class Controller:
+    
     def __init__(self, model, view):
         self.model = model
         self.view = view
@@ -24,42 +24,40 @@ class Controller:
         }
 
     def handle_request(self, request):
-
         handler = self.routes.get(request.command, {}).get(request.path)
-
         if handler is None:
             self.send_error(request, 404, f'The requested URL {request.path} was not found on this server.')
-        else:
-            handler(request)
+            return
+        handler(request)
 
     def handle_index(self, request):
         if self.is_authenticated(request):
             request.send_response(303)
             request.send_header('Location', '/home')
             request.end_headers()
-        else:
-            self.send_response(request, 200, self.view.render_index())
+            return
+        self.send_response(request, 200, self.view.render_index())
     
     def handle_home(self, request):
         if not self.is_authenticated(request):
             request.send_response(303)
             request.send_header('Location', '/')
             request.end_headers()
-        else:
-            self.send_response(request, 200, self.view.render_home(self.model.get_comments()))
+            return
+        self.send_response(request, 200, self.view.render_home(self.model.get_comments()))
     
     def is_authenticated(self, request):
         # Check if the user is authenticated by checking if a cookie with the
         # username and password exists in the request
-        if 'Cookie' in request.headers:
-            cookies = http.cookies.SimpleCookie(request.headers['Cookie'])
-            username = '' 
-            password = ''
-            if 'details' in cookies and re.search(r"(?=.*username)(?=.*password)", cookies["details"].value):
-                username, password = ast.literal_eval(cookies["details"].value).values()
-            if username and password:
-                return self.model.check_user(username, password)
-        return False
+        if 'Cookie' not in request.headers:
+            return False
+        cookies = http.cookies.SimpleCookie(request.headers['Cookie'])
+        username = '' 
+        password = ''
+        if 'details' in cookies and re.search(r"(?=.*username)(?=.*password)", cookies["details"].value):
+            username, password = ast.literal_eval(cookies["details"].value).values()
+        if username and password:
+            return self.model.check_user(username, password)
     
     def send_response(self, request, code, body):
         request.send_response(code)
@@ -78,11 +76,13 @@ class Controller:
     def handle_comment(self, request):
         content_length = int(request.headers['Content-Length'])
         post_data = request.rfile.read(content_length).decode('utf-8')
+        
         try:
             comment = urllib.parse.parse_qs(post_data)['comment'][0]
         except KeyError:
             self.send_error(request, 400, f'Missing a comment {KeyError}')
             return
+        
         self.model.add_comment(comment)
         request.send_response(303)
         request.send_header('Location', '/home')
@@ -115,8 +115,6 @@ class Controller:
             request.send_header('Location', '/')
             request.end_headers()
 
-
-
     def send_error(self, request, code, body):
         self.send_response(request, code, self.view.error_html(code, body)) 
 
@@ -146,4 +144,3 @@ class Controller:
         request.send_header('Location', '/')
         request.send_header('Set-Cookie', cookie.output(header=''))
         request.end_headers()
-
