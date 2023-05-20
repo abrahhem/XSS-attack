@@ -30,6 +30,4 @@ class Model:
         except FileNotFoundError:
             cookies = []
         return cookies
-
-
-
+    

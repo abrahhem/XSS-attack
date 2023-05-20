@@ -45,4 +45,3 @@ class Controller:
         request.send_header('Content-type', 'text/html')
         request.end_headers()
         request.wfile.write(self.view.render_error(code, body).encode())
-    
