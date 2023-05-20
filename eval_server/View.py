@@ -3,7 +3,7 @@ class View:
         self.model = model
     
     def render_index(self, cookies):
-        cookie_template = '<div class="card"><p>cookie: {}</p><br>origin: {}</div>'
+        cookie_template = '<div class="card"><p>cookie: {}<br>origin: {}</p></div>'
         cookies_list_html = ''.join(cookie_template.format(*cookie.rsplit('->', 1)) for cookie in cookies)
         index_html = f"""
             <!DOCTYPE html>
@@ -39,9 +39,9 @@ class View:
                         overflow: scroll;
                     }}
                     .card {{
-                        background-color: rgba(255, 255, 255, 0.8);
+                        background-color: rgba(0, 0, 0, 0.8);
                         border-radius: 10px;
-                        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+                        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
                         cursor: pointer;
                         margin: 20px;
                         padding: 50px;
@@ -51,7 +51,7 @@ class View:
                         transform: translateY(-10px);
                     }}
                     .card p {{
-                        text-align: center;
+                        color: white;
                         font-size: 1.5em;
                         margin: 0;
                     }}
@@ -60,7 +60,7 @@ class View:
             </head>
             <body>
                 <h1>Hello world</h1>
-                <h3>All the cookies of that have been captured so far</h3>
+                <h3>All the cookies that have been captured so far</h3>
                 <div class="container">
                     {cookies_list_html}
                 </div>
