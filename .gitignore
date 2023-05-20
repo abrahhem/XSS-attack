@@ -1,4 +1,7 @@
 eval_server/__pycache__
 blog_server/__pycache__
 
+eval_server/env/
+blog_server/env/
+
 .DS_Store
