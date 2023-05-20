@@ -2,6 +2,7 @@
 import pandas as pd
 
 class Model:
+    
     def __init__(self, cookies_file):
         self.cookies_file = cookies_file
     
@@ -21,7 +22,6 @@ class Model:
         with open(self.cookies_file, 'w') as f:
             for cookie in unique_cookies:
                 f.write(cookie + '\n')
-
     
     def get_cookies(self):
         try:
@@ -30,4 +30,3 @@ class Model:
         except FileNotFoundError:
             cookies = []
         return cookies
-    

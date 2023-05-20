@@ -5,6 +5,7 @@ from View import View
 from Controller import Controller
 
 class RequestHandler(http.server.BaseHTTPRequestHandler):
+    
     def __init__(self, request, client_address, server):
         self.model = Model("cookies.txt")
         self.view = View(self.model)
@@ -14,7 +15,6 @@ class RequestHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         self.controller.handle_request(self)
         
-
 if __name__ == '__main__':
     server_address = ('', 8001)
     httpd = http.server.HTTPServer(server_address, RequestHandler)
